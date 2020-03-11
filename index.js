@@ -157,9 +157,9 @@ export default class ScrollPicker extends React.Component {
             this.sview.scrollTo({ y: verticalElem, animated: true });
                         
         }
-        if (this.state.selectedIndex === selectedIndex) {
-            return;
-        }
+//         if (this.state.selectedIndex === selectedIndex) {
+//             return;
+//         }
         // onValueChange
         if (this.props.onValueChange) {
             const selectedValue = this.props.dataSource[selectedIndex];
