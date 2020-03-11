@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { View, ScrollView, Dimensions, Platform } from "react-native";
 import PropTypes from "prop-types";
-
 const Container = styled.View`
     height: ${(props) => props.wrapperHeight};
     flex: 1;
@@ -42,24 +41,22 @@ export default class ScrollPicker extends React.Component {
         this.onScrollBeginDrag = this.onScrollBeginDrag.bind(this);
         this.onScrollEndDrag = this.onScrollEndDrag.bind(this);
         this.state = {
-            selectedIndex: 1
+            selectedIndex: 0
         };
     }
-
     componentDidMount() {
         if (this.props.selectedIndex) {
+            this.setState({ selectedIndex: this.props.selectedIndex })
             setTimeout(() => {
                 this.scrollToIndex(this.props.selectedIndex);
             }, 0);
         }
     }
-
     componentWillUnmount() {
         if (this.timer) {
             clearTimeout(this.timer);
         }
     }
-
     render() {
         const { header, footer } = this.renderPlaceHolder();
         return (
@@ -92,18 +89,15 @@ export default class ScrollPicker extends React.Component {
             </Container>
         );
     }
-
     renderPlaceHolder() {
         const height = (this.props.wrapperHeight - this.props.itemHeight) / 2;
         const header = <View style={{ height, flex: 1 }} />;
         const footer = <View style={{ height, flex: 1 }} />;
         return { header, footer };
     }
-
     renderItem(data, index) {
         const isSelected = index === this.state.selectedIndex;
         const { fontSize, lineHeight, displayField } = this.props;
-
         // Render a custom property of an object
         let display = data;
         if (
@@ -112,7 +106,6 @@ export default class ScrollPicker extends React.Component {
         ) {
             display = data[displayField];
         }
-
         const item = (
             <ItemText
                 fontSize={fontSize}
@@ -125,35 +118,36 @@ export default class ScrollPicker extends React.Component {
                 {display}
             </ItemText>
         );
-
         return (
             <SelectedItem key={index} itemHeight={this.props.itemHeight}>
                 {item}
             </SelectedItem>
         );
     }
-
-    scrollFix(e) {
+    async scrollFix(e) {
         let verticalY = 0;
         const h = this.props.itemHeight;
+        
         if (e.nativeEvent.contentOffset) {
             verticalY = e.nativeEvent.contentOffset.y;
         }
         const selectedIndex = Math.round(verticalY / h);
+        this.setState({
+            selectedIndex
+        });
+        
         const verticalElem = selectedIndex * h;
         if (verticalElem !== verticalY) {
             // using scrollTo in ios, onMomentumScrollEnd will be invoked
-            if (Platform.OS === "ios") {
-                this.isScrollTo = true;
-            }
-            this.sview.scrollTo({ y: verticalElem });
+            // if (Platform.OS === "ios") {
+            //     this.isScrollTo = true;
+            // }
+           // this.sview.scrollTo({ y: verticalY, animated: true });
+            this.sview.scrollTo({ y: verticalElem, animated: true });
         }
         if (this.state.selectedIndex === selectedIndex) {
             return;
         }
-        this.setState({
-            selectedIndex
-        });
         // onValueChange
         if (this.props.onValueChange) {
             const selectedValue = this.props.dataSource[selectedIndex];
@@ -162,9 +156,9 @@ export default class ScrollPicker extends React.Component {
     }
     onScrollBeginDrag() {
         this.dragStarted = true;
-        if (Platform.OS === "ios") {
-            this.isScrollTo = false;
-        }
+        // if (Platform.OS === "ios") {
+        //     this.isScrollTo = false;
+        // }
         if (this.timer) {
             clearTimeout(this.timer);
         }
@@ -187,7 +181,7 @@ export default class ScrollPicker extends React.Component {
             if (!this.momentumStarted && !this.dragStarted) {
                 this.scrollFix(element, "timeout");
             }
-        }, 10);
+        }, 0);
     }
     onMomentumScrollBegin() {
         this.momentumStarted = true;
@@ -198,17 +192,16 @@ export default class ScrollPicker extends React.Component {
     onMomentumScrollEnd(e) {
         this.props.onMomentumScrollEnd();
         this.momentumStarted = false;
-        if (!this.isScrollTo && !this.momentumStarted && !this.dragStarted) {
+        if (!this.momentumStarted && !this.dragStarted) {
             this.scrollFix(e);
         }
     }
-
     scrollToIndex(ind) {
         this.setState({
             selectedIndex: ind
         });
         const y = this.props.itemHeight * ind;
-        this.sview.scrollTo({ y });
+        this.sview.scrollTo({ y, animated: true });
     }
 }
 ScrollPicker.propTypes = {
