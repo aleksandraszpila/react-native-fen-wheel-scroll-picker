@@ -4,28 +4,27 @@ import { View, ScrollView, Dimensions, Platform } from "react-native";
 import PropTypes from "prop-types";
 
 const Container = styled.View`
-    height: ${(props) => props.wrapperHeight};
+    height: ${(props) => props.wrapperHeight}px;
     flex: 1;
     overflow: hidden;
     align-self: center;
-    width: ${(props) => props.wrapperWidth};
+    width: ${(props) => props.wrapperWidth}px;
     background-color: ${(props) => props.wrapperBackground};
 `;
 export const HighLightView = styled.View`
     position: absolute;
-    top: ${(props) => (props.wrapperHeight - props.itemHeight) / 2};
-    height: ${(props) => props.itemHeight};
-    width: ${(props) => props.highlightWidth};
+    top: ${(props) => (props.wrapperHeight - props.itemHeight) / 2}px;
+    height: ${(props) => props.itemHeight}px;
+    width: ${(props) => props.highlightWidth}px;
     border-top-color: ${(props) => props.highlightColor};
     border-bottom-color: ${(props) => props.highlightColor};
     border-top-width: ${(props) => props.highlightBorderWidth}px;
     border-bottom-width: ${(props) => props.highlightBorderWidth}px;
 `;
 export const SelectedItem = styled.View`
-    height: 30px;
     justify-content: center;
     align-items: center;
-    height: ${(props) => props.itemHeight};
+    height: ${(props) => props.itemHeight}px;
 `;
 export const ItemText = styled.Text`
     color: ${(props) => props.color};
