@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { View, ScrollView, Dimensions, Platform } from "react-native";
 import PropTypes from "prop-types";
+
 const Container = styled.View`
     height: ${(props) => props.wrapperHeight};
     flex: 1;
@@ -44,6 +45,7 @@ export default class ScrollPicker extends React.Component {
             selectedIndex: 0
         };
     }
+
     componentDidMount() {
         if (this.props.selectedIndex) {
             this.setState({ selectedIndex: this.props.selectedIndex })
@@ -52,11 +54,13 @@ export default class ScrollPicker extends React.Component {
             }, 0);
         }
     }
+
     componentWillUnmount() {
         if (this.timer) {
             clearTimeout(this.timer);
         }
     }
+
     render() {
         const { header, footer } = this.renderPlaceHolder();
         return (
@@ -89,15 +93,18 @@ export default class ScrollPicker extends React.Component {
             </Container>
         );
     }
+
     renderPlaceHolder() {
         const height = (this.props.wrapperHeight - this.props.itemHeight) / 2;
         const header = <View style={{ height, flex: 1 }} />;
         const footer = <View style={{ height, flex: 1 }} />;
         return { header, footer };
     }
+
     renderItem(data, index) {
         const isSelected = index === this.state.selectedIndex;
         const { fontSize, lineHeight, displayField } = this.props;
+
         // Render a custom property of an object
         let display = data;
         if (
@@ -106,6 +113,7 @@ export default class ScrollPicker extends React.Component {
         ) {
             display = data[displayField];
         }
+
         const item = (
             <ItemText
                 fontSize={fontSize}
@@ -118,12 +126,14 @@ export default class ScrollPicker extends React.Component {
                 {display}
             </ItemText>
         );
+
         return (
             <SelectedItem key={index} itemHeight={this.props.itemHeight}>
                 {item}
             </SelectedItem>
         );
     }
+
     async scrollFix(e) {
         let verticalY = 0;
         const h = this.props.itemHeight;
@@ -134,8 +144,8 @@ export default class ScrollPicker extends React.Component {
         const selectedIndex = Math.round(verticalY / h);
         this.setState({
             selectedIndex
-        });
-        
+        }); 
+
         const verticalElem = selectedIndex * h;
         if (verticalElem !== verticalY) {
             // using scrollTo in ios, onMomentumScrollEnd will be invoked
@@ -143,7 +153,9 @@ export default class ScrollPicker extends React.Component {
             //     this.isScrollTo = true;
             // }
            // this.sview.scrollTo({ y: verticalY, animated: true });
+              
             this.sview.scrollTo({ y: verticalElem, animated: true });
+                        
         }
         if (this.state.selectedIndex === selectedIndex) {
             return;
@@ -196,6 +208,7 @@ export default class ScrollPicker extends React.Component {
             this.scrollFix(e);
         }
     }
+
     scrollToIndex(ind) {
         this.setState({
             selectedIndex: ind
